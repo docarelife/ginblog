@@ -1,0 +1,18 @@
+{
+  "gin": {
+    "mode": "release"
+  },
+  "mysql": {
+    "username": "root",
+    "password": "",
+    "ip": "127.0.0.1",
+    "port": "3306",
+    "dbname": "myblog",
+    "param": "charset=utf8\u0026parseTime=True\u0026loc=Local"
+  },
+  "redis": {
+    "address": "127.0.0.1:6379",
+    "password": "",
+    "db": 0
+  }
+}
