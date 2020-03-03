@@ -22,6 +22,8 @@ func (a Article) GetList() ([]*Article,error) {
 		fmt.Printf("数据库连接失败：%v\n",err.Error())
 		return nil,err
 	}
+	defer DB.Close()
+
 	var articles []*Article
 	err=DB.Find(&articles).Error
 	if err!=nil && err!=gorm.ErrRecordNotFound{
@@ -37,7 +39,10 @@ func (a Article) GetOne() (*Article,error) {
 		fmt.Printf("数据库连接失败：%v\n",err.Error())
 		return nil,err
 	}
+	defer DB.Close()
+
 	var article Article
+
 	err=DB.Where("id=?",a.ID).First(&article).Error
 	if err!=nil{
 		return nil,err
@@ -51,6 +56,8 @@ func (a Article) Add() error {
 		fmt.Printf("数据库连接失败：%v\n",err.Error())
 		return err
 	}
+	defer DB.Close()
+
 	err=DB.Create(&a).Error
 	if err!=nil{
 		return err
@@ -58,12 +65,48 @@ func (a Article) Add() error {
 	return nil
 }
 
+func (a Article) View() error {
+	DB,err:=db.NewConnect()
+	if err!=nil{
+		fmt.Printf("数据库连接失败：%v\n",err.Error())
+		return err
+	}
+	defer DB.Close()
+
+	err=DB.Model(&a).UpdateColumn("viewcount",gorm.Expr("viewcount + ?",1)).Error
+	if err !=nil {
+		return err
+	}
+	return nil
+}
+
+func (a Article) Praise() (uint,error) {
+	DB,err:=db.NewConnect()
+	if err!=nil{
+		fmt.Printf("数据库连接失败：%v\n",err.Error())
+		return 0,err
+	}
+	defer DB.Close()
+
+	err=DB.Model(&a).UpdateColumn("praisecount",gorm.Expr("praisecount + ?",1)).Error
+	if err !=nil {
+		return 0,err
+	}
+
+	var article Article
+	DB.Where("id = ?",a.ID).Select("praisecount").First(&article)
+	return article.PraiseCount,nil
+}
+
+
 func Migrate(){
 	DB,err:=db.NewConnect()
 	if err!=nil{
 		fmt.Printf("数据库连接失败：%v\n",err.Error())
 		return
 	}
+	defer DB.Close()
+
 	err=DB.AutoMigrate(&Article{}).Error
 	if err!=nil{
 		fmt.Printf("数据库迁移失败：%v\n",err.Error())

@@ -23,5 +23,7 @@ func InitRouter() *gin.Engine {
 	r.PUT("/article",v1.UpdateArticle)
 	r.DELETE("/article",v1.UpdateArticle)
 
+	r.POST("/praise/:what/:id",v1.Praise)
+
 	return r
 }
