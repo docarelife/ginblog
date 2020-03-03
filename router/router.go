@@ -20,8 +20,8 @@ func InitRouter() *gin.Engine {
 	r.GET("/article",v1.GetArticleList)
 	r.GET("/article/:id",v1.GetArticle)
 	r.POST("/article",v1.AddArticle)
-	r.PUT("/article",v1.UpdateArticle)
-	r.DELETE("/article",v1.UpdateArticle)
+	r.PUT("/article/:id",v1.UpdateArticle)
+	r.DELETE("/article/:id",v1.DeleteArticle)
 
 	r.POST("/praise/:what/:id",v1.Praise)
 
